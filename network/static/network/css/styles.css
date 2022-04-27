@@ -1,42 +1,10 @@
-body {
-    border-radius: 10px
-}
+.gradient-custom-2 {
+/* fallback for old browsers */
+background: #fbc2eb;
 
-.card {
-    width: 400px;
-    border: none;
-    border-radius: 10px;
-    background-color: #fff
-}
+/* Chrome 10-25, Safari 5.1-6 */
+background: -webkit-linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1));
 
-.stats {
-    background: #f2f5f8 !important;
-    color: #000 !important
-}
-
-.articles {
-    font-size: 10px;
-    color: #a1aab9
-}
-
-.number1 {
-    font-weight: 500
-}
-
-.followers {
-    font-size: 10px;
-    color: #a1aab9
-}
-
-.number2 {
-    font-weight: 500
-}
-
-.rating {
-    font-size: 10px;
-    color: #a1aab9
-}
-
-.number3 {
-    font-weight: 500
+/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1))
 }

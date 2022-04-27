@@ -27,3 +27,4 @@ class Profile(models.Model):
     follower = models.ManyToManyField(Follower, null=True)
     following = models.ManyToManyField(Following, null=True)
     post = models.ManyToManyField(Post)
+
