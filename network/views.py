@@ -74,15 +74,17 @@ def register(request):
         return render(request, "network/register.html")
 
 
+# ------------------------------------------------------------------------------------------------------------
 def profile_view(request, user_id_):  # profile view function
     profile = Profile.objects.get(user_id=user_id_)
     followers = Profile.objects.get(user_id=user_id_).follower.count()
     following = Profile.objects.get(user_id=user_id_).following.count()
     posts_number = Profile.objects.get(user_id=user_id_).post.count()
-
+    posts = Post.objects.filter(user_id=user_id_)
     return render(request, 'network/profile_view.html', {
         'profile': profile,
         'followers': followers,
         'following': following,
         'posts_number': posts_number,
+        'posts': posts,
     })
