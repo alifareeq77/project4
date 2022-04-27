@@ -4,7 +4,7 @@ body {
 }
 
 .card {
-    width: 400px;
+
     border: none;
     border-radius: 10px;
     background-color: #fff
@@ -40,4 +40,17 @@ body {
 
 .number3 {
     font-weight: 500
+}
+
+
+#control-textarea ,#control-textarea:focus{
+    margin-top: 20px;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none;
+    height: 500px;
 }

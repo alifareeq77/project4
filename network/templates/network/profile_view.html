@@ -1,7 +1,7 @@
 {% extends 'network/layout.html' %}
 {% load static %}
 {% block body %}
-    <section class="h-100 gradient-custom-2">
+    <section class="h-100 gradient-custom-2" id="profile_view">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col col-lg-9 col-xl-7">
@@ -16,7 +16,7 @@
                                     {% if  user != profile.user %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                                                 style="z-index: 1;margin-left: 38px">
-                                            Follow
+                                            Follow fun
                                         </button>
                                     {% else %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
@@ -83,6 +83,41 @@
                                     </div>
                                 </div>
                             {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {#-------------------create new post------------------------#}
+    <section class="h-100 gradient-custom-2">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7">
+                    <div class="card">
+                        <div class="row g-2 border border-primary rounded"
+                             style="margin: 25px;position: relative;">
+                            <div class="col" style="">
+                                <div class="row d-flex justify-content-between"
+                                     style="padding: 10px 10px 1px 10px">
+                                    <div class="username" style="color: blue">
+                                        <img class="img-thumbnail"
+                                             src="{% static 'network/media/pngitem_1468479.png' %} "
+                                             style="width: 45px;height: 45px;border-radius: 90%" alt="profile img">
+                                        <span style="align-items: center">{{ user }}</span></div>
+
+                                </div>
+                                {# ----------------------form body---------------- #}
+                                <div class="form-group" style="text-align: start; padding: 10px;margin-bottom: 20px">
+
+                                        <textarea class="form-control " id="control-textarea" rows="3" placeholder="Write something here..."></textarea>
+                                </div>
+                                <div class="row d-flex justify-content-end" style="margin: 20px 10px 10px 20px">
+                                    <button type="submit" class="btn btn-primary">
+                                        submit
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
