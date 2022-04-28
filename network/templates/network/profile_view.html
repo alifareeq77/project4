@@ -1,5 +1,7 @@
 {% extends 'network/layout.html' %}
 {% load static %}
+{% block extra_links %}<link href="{% static 'network/css/profile_view.css' %}" rel="stylesheet">{% endblock extra_links %}
+{% block title %}{{ profile.user }}{% endblock %}
 {% block body %}
     <section class="h-100 gradient-custom-2" id="profile_view">
         <div class="container py-5 h-100">
