@@ -11,12 +11,6 @@ class Following(models.Model):
     followed_user = models.ForeignKey(User, related_name='followed_user', on_delete=models.CASCADE)
 
 
-class Post(models.Model):
-    post = models.CharField(max_length=15000)
-    user = models.ForeignKey(User, related_name='post_user', on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=True)
-
-
 class Follower(models.Model):
     followers = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
     following_user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
@@ -24,7 +18,14 @@ class Follower(models.Model):
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile_user')
-    follower = models.ManyToManyField(Follower, null=True)
-    following = models.ManyToManyField(Following, null=True)
-    post = models.ManyToManyField(Post)
+    follower = models.ManyToManyField(Follower)
+    following = models.ManyToManyField(Following)
 
+    def __str__(self):
+        return self.user.username
+
+
+class Post(models.Model):
+    post = models.CharField(max_length=15000)
+    date = models.DateTimeField(auto_now=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post_profile')
