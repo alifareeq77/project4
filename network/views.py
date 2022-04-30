@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
@@ -98,7 +100,6 @@ def profile_view(request, user_id_):  # profile view function
 
 # create post --------------------------------------------------------------------------
 def create_post(request):
-
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -107,7 +108,22 @@ def create_post(request):
             user_name = request.user
             user = User.objects.get(username=user_name)
             profile = Profile.objects.get(user=user)
-
             Post.objects.create(post=post, profile=profile).save()
 
     return redirect('profile_view', request.user.id)
+
+
+# handling the put request of editing post -------------------------------------------------------
+def edit_post(request, post_id_):
+    post = Post.objects.filter(id=post_id_)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        data = request.POST['content']
+
+        if data is not None:
+            post.post = data
+
+            print("db updated")
+            return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=400)
