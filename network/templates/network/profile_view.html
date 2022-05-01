@@ -19,10 +19,9 @@
                                      style="width: 150px; z-index: 1;border-radius: 50%;margin-left: 20px">
                                 <div class=" mt-4 mb-2 d-flex" style="z-index: 1 ">
                                     {% if  user != profile.user %}
-                                        <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
-                                                style="z-index: 1;margin-left: 38px">
-                                            {{ is_followed }}
-                                        </button>
+                                        <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token_follow"/>
+                                        <button type="button" class="btn btn-outline-dark follow_me" data-mdb-ripple-color="dark"
+                                                style="z-index: 1;margin-left: 38px" id="follow_btn{{ profile.user.id }}">{{ is_followed }}</button>
                                     {% else %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                                                 style="z-index: 1;margin-left: 38px" id="cp_button">
@@ -43,7 +42,7 @@
                                     <p class="small text-muted mb-0">posts</p>
                                 </div>
                                 <div class="px-3">
-                                    <p class="mb-1 h5">{{ followers }}</p>
+                                    <p class="mb-1 h5" id="followers_num">{{ followers }}</p>
                                     <p class="small text-muted mb-0">Followers</p>
                                 </div>
                                 <div>

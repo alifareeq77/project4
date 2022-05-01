@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import MultipleObjectsReturned
 
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -89,7 +89,7 @@ def profile_view(request, user_id_):  # profile view function
     following = Following.objects.filter(followed_by=profile.user.id).count()
     posts_number = Post.objects.filter(profile=profile).count()
     posts = Post.objects.filter(profile=profile).order_by('date').reverse()
-    # for other users
+    # for other users----------------------------------------------------------------------------------
     is_following = Following.objects.filter(followed_user=profile.user.id, followed_by=request.user)
 
     # check if the user is followed
@@ -100,6 +100,22 @@ def profile_view(request, user_id_):  # profile view function
             return "Follow"
 
     form = PostForm()
+
+    if request.method == 'PUT':
+
+        data = json.loads(request.body)
+        if data.get('profile_user_id') is not None:
+            try:
+                exist = Following.objects.get(followed_by_id=request.user.id,
+                                              followed_user_id=data.get('profile_user_id'))
+                exist.delete()
+                resp = {'statue': is_f(Following.objects.filter(followed_by_id=request.user.id))}
+                return JsonResponse(data=resp, status=204)
+            except Following.DoesNotExist:
+                Following.objects.create(followed_by_id=request.user.id,
+                                         followed_user_id=data.get('profile_user_id')).save()
+                resp = {'statue': is_f(Following.objects.filter(followed_by_id=request.user.id))}
+                return JsonResponse(data=resp, status=204)
     return render(request, 'network/profile_view.html', {
         'profile': profile,
         'followers': followers,
@@ -129,14 +145,14 @@ def create_post(request):
 # handling the put request of editing post -------------------------------------------------------
 def edit_post(request, post_id_):
     if request.method == 'PUT':
-        data = json.loads(request.body)
-        if data.get('post') is not None:
-            post_database = Post.objects.get(id=post_id_)
-            post_database.post = data.get('post')
-            post_database.save()
-            print('updated db')
-            return JsonResponse(post_database.serialize(), status=204)
+        post_database = Post.objects.get(id=post_id_)
 
-
-def follow(request, profile_user):
-    pass
+        if request.user.id == post_database.profile.user.id:
+            data = json.loads(request.body)
+            if data.get('post') is not None:
+                post_database.post = data.get('post')
+                post_database.save()
+                print('updated db')
+                return JsonResponse(post_database.serialize(), status=204)
+        else:
+            return HttpResponse(status=304)
