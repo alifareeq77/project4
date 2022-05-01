@@ -1,7 +1,9 @@
 {% extends 'network/layout.html' %}
 {% load static %}
 {% block extra_links %}
-    <link href="{% static 'network/css/profile_view.css' %}" rel="stylesheet">{% endblock extra_links %}
+    <link href="{% static 'network/css/profile_view.css' %}" rel="stylesheet">
+<script src="{% static 'network/javascript/profile_view.js' %}"></script>
+{% endblock extra_links %}
 {% block title %}{{ profile.user }}{% endblock %}
 {% block body %}
     <section class="h-100 gradient-custom-2" id="profile_view">
@@ -76,6 +78,7 @@
                                                         post
                                                     </button>
                                                 </div>
+                                                <div class="row text-muted" style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
                                                 <hr/>
                                                 {#----------------------------------------------the post#}
                                                 <p class="row post_place{{ post.id }}"
@@ -88,7 +91,7 @@
                                                         <div class="form-group"
                                                              style="text-align: start;">
                                                                 <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token"/>
-                                                            <textarea name="post" class="form-control textarea{{ post.id }}" id="control-textarea" form="edit_form{{ post.id }}" autofocus required>
+                                                            <textarea name="post" class="form-control textarea{{ post.id }}" id="control-textarea" form="edit_form{{ post.id }}" autofocus required style="overflow-wrap:break-word ">
                                                             </textarea>
                                                             <div class="row d-flex justify-content-end"
                                                                  style="margin: 20px 10px 0 20px">

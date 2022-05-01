@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#create_post').style.animationPlayState = 'running';
         document.querySelector('#profile_view').style.animationPlayState = 'running';
     }
-
+//edit post
     function show_edit(postId) {
         //showing edit text
         document.querySelector('#profile_view').style.display = 'block';

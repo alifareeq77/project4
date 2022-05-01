@@ -1,9 +1,9 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import MultipleObjectsReturned
-from django.core.serializers import serialize
+
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -13,7 +13,10 @@ from .forms import *
 
 # index--------------------------------------
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.objects.order_by('date').reverse()
+    return render(request, "network/index.html", context={
+        'posts': posts
+    })
 
 
 # login--------------------------------------------------
@@ -85,7 +88,7 @@ def profile_view(request, user_id_):  # profile view function
     followers = Profile.objects.get(user_id=user_id_).follower.count()
     following = Profile.objects.get(user_id=user_id_).following.count()
     posts_number = Post.objects.filter(profile=profile).count()
-    posts = Post.objects.filter(profile=profile)
+    posts = Post.objects.filter(profile=profile).order_by('date').reverse()
 
     form = PostForm()
     return render(request, 'network/profile_view.html', {
