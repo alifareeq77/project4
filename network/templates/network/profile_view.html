@@ -70,29 +70,38 @@
                                                              style="width: 45px;height: 45px;border-radius: 90%">
                                                         <span style="align-items: center">{{ post.profile }} </span>
                                                     </div>
+                                                    {#                                                    edit btn#}
                                                     <button type="button" class="btn btn-dark btn-sm edit"
-                                                            style="height: 30px;margin: 10px" id="{{ post.id }}">edit
+                                                            style="height: 30px;margin: 10px" id="btn{{ post.id }}">edit
                                                         post
                                                     </button>
                                                 </div>
                                                 <hr/>
+                                                {#----------------------------------------------the post#}
+                                                <p class="row post_place{{ post.id }}"
+                                                     style="text-align: start; padding: 10px;margin-bottom: 20px;"
+                                                     id="post{{ post.id }}">{{ post.post }}</p>
+                                                {#--------------------------------------------------post form (hidden initialiy)#}
+                                                <div class="row show_edit{{ post.id }}"
+                                                     style="text-align: start; padding: 10px;display: none">
 
-                                                <div class="row post_place"
-                                                     style="text-align: start; padding: 10px;margin-bottom: 20px"
-                                                     id="post{{ post.id }}">
-                                                    {{ post.post }}
+                                                        <div class="form-group"
+                                                             style="text-align: start;">
+                                                                <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token"/>
+                                                            <textarea name="post" class="form-control textarea{{ post.id }}" id="control-textarea" form="edit_form{{ post.id }}" autofocus required>
+                                                            </textarea>
+                                                            <div class="row d-flex justify-content-end"
+                                                                 style="margin: 20px 10px 0 20px">
+                                                                <button type="button" class="btn btn-primary" id="do_edit{{ post.id }}">
+                                                                    submit
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                 </div>
-                                                    <form name="edit-it" id="edit_form{{ posts.id }}" method="post" action="{% url  'edit_post' post.id %}">
-                                                        {% csrf_token %}
-                                                <div class="row show_edit "
-                                                     style="
-                                                     text-align: start; padding: 10px;margin-bottom: 20px">
-                                                </div>
-                                                    </form>
                                             </div>
                                         </div>
-                                        </div>
                                     {% endfor %}
+                                    </div>
                                 {% else %}
                                     <div class="row g-2" style="margin: 25px">
                                         <div class="col" style="padding: 25px;">

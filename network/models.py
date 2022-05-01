@@ -29,3 +29,9 @@ class Post(models.Model):
     post = models.CharField(max_length=15000)
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post_profile')
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            'post':self.post
+        }

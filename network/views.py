@@ -1,9 +1,9 @@
 import json
-
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import MultipleObjectsReturned
+from django.core.serializers import serialize
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -115,15 +115,11 @@ def create_post(request):
 
 # handling the put request of editing post -------------------------------------------------------
 def edit_post(request, post_id_):
-    post = Post.objects.filter(id=post_id_)
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        data = request.POST['content']
-
-        if data is not None:
-            post.post = data
-
-            print("db updated")
-            return HttpResponse(status=204)
-        else:
-            return HttpResponse(status=400)
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        if data.get('post') is not None:
+            post_database = Post.objects.get(id=post_id_)
+            post_database.post = data.get('post')
+            post_database.save()
+            print('updated db')
+            return JsonResponse(post_database.serialize(), status=204)

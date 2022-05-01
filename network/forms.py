@@ -15,5 +15,6 @@ class PostForm(forms.ModelForm):
                 "class": "form-control ",
                 "id": "control-textarea",
                 "placeholder": "Write something here...",
+                'name': "post "
             })
         }
