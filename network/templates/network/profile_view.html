@@ -21,15 +21,15 @@
                                     {% if  user != profile.user %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                                                 style="z-index: 1;margin-left: 38px">
-                                            Follow fun
+                                            {{ is_followed }}
                                         </button>
                                     {% else %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                                                 style="z-index: 1;margin-left: 38px" id="cp_button">
                                             Create post
                                         </button>
-                                        </div>
                                     {% endif %}
+                                        </div>
                             </div>
                             <div class="ms-3" style="margin-top: 135px;margin-left: 50px">
                                 <h5>{{ profile.user }}</h5>
@@ -119,7 +119,8 @@
         </div>
     </section>
     {#-------------------create new post------------------------#}
-    <section class="h-100 gradient-custom-2" id="create_post">
+    {% if  user == profile.user %}
+    <section class="h-100 gradient-custom-2" id="create_post" >
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col col-lg-9 col-xl-7">
@@ -157,4 +158,5 @@
             </div>
         </div>
     </section>
+    {% endif %}
 {% endblock %}

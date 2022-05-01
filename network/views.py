@@ -85,10 +85,19 @@ def register(request):
 # profile view---------------------------------------------------------------------------------------------------------
 def profile_view(request, user_id_):  # profile view function
     profile = Profile.objects.get(user_id=user_id_)
-    followers = Profile.objects.get(user_id=user_id_).follower.count()
-    following = Profile.objects.get(user_id=user_id_).following.count()
+    followers = Following.objects.filter(followed_user=profile.user.id).count()
+    following = Following.objects.filter(followed_by=profile.user.id).count()
     posts_number = Post.objects.filter(profile=profile).count()
     posts = Post.objects.filter(profile=profile).order_by('date').reverse()
+    # for other users
+    is_following = Following.objects.filter(followed_user=profile.user.id, followed_by=request.user)
+
+    # check if the user is followed
+    def is_f(is_ff):
+        if is_ff:
+            return "unfollow"
+        else:
+            return "Follow"
 
     form = PostForm()
     return render(request, 'network/profile_view.html', {
@@ -97,7 +106,8 @@ def profile_view(request, user_id_):  # profile view function
         'following': following,
         'posts_number': posts_number,
         'posts': posts,
-        'form': form
+        'form': form,
+        'is_followed': is_f(is_following)
     })
 
 
@@ -126,3 +136,7 @@ def edit_post(request, post_id_):
             post_database.save()
             print('updated db')
             return JsonResponse(post_database.serialize(), status=204)
+
+
+def follow(request, profile_user):
+    pass

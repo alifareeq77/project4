@@ -7,18 +7,12 @@ class User(AbstractUser):
 
 
 class Following(models.Model):
-    user = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    followed_by = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     followed_user = models.ForeignKey(User, related_name='followed_user', on_delete=models.CASCADE)
-
-
-class Follower(models.Model):
-    followers = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
-    following_user = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
 
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile_user')
-    follower = models.ManyToManyField(Follower)
     following = models.ManyToManyField(Following)
 
     def __str__(self):
@@ -33,5 +27,5 @@ class Post(models.Model):
     def serialize(self):
         return {
             "id": self.id,
-            'post':self.post
+            'post': self.post
         }
