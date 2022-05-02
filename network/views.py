@@ -147,3 +147,11 @@ def edit_post(request, post_id_):
                 return JsonResponse(post_database.serialize(), status=204)
         else:
             return HttpResponse(status=304)
+
+
+def following_view(request):
+    followers = Following.objects.filter(followed_by_id=request.user.id)
+    posts = Post.objects.filter(profile_id__in=followers.values('followed_user'))
+    return render(request, 'network/following.html', {
+        'posts': posts
+    })

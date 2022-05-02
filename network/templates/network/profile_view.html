@@ -73,10 +73,12 @@
                                                         <span style="align-items: center">{{ post.profile }} </span>
                                                     </div>
                                                     {#                                                    edit btn#}
+                                                    {% if user.id == profile.id %}
                                                     <button type="button" class="btn btn-dark btn-sm edit"
                                                             style="height: 30px;margin: 10px" id="btn{{ post.id }}">edit
                                                         post
                                                     </button>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="row text-muted" style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
                                                 <hr/>
