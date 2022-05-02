@@ -16,7 +16,7 @@
                                             <img class="img-thumbnail"
                                                  src="{% static 'network/media/pngitem_1468479.png' %} "
                                                  style="width: 45px;height: 45px;border-radius: 90%" alt="profile img">
-                                            <a style="align-items: center" href="{% url 'profile_view' post.profile.user.id %}">{{ post.profile }}</a></div>
+                                            <a style="align-items: center" href="{% url 'profile_view' post.profile.id %}">{{ post.profile.username }}</a></div>
 
                                     </div>
                                     <hr/>

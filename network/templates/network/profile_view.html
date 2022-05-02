@@ -4,7 +4,7 @@
     <link href="{% static 'network/css/profile_view.css' %}" rel="stylesheet">
 <script src="{% static 'network/javascript/profile_view.js' %}"></script>
 {% endblock extra_links %}
-{% block title %}{{ profile.user }}{% endblock %}
+{% block title %}{{ profile.username }}{% endblock %}
 {% block body %}
     <section class="h-100 gradient-custom-2" id="profile_view">
         <div class="container py-5 h-100">
@@ -18,11 +18,12 @@
                                      alt="profile img" class="img-fluid img-thumbnail mt-4 mb-2"
                                      style="width: 150px; z-index: 1;border-radius: 50%;margin-left: 20px">
                                 <div class=" mt-4 mb-2 d-flex" style="z-index: 1 ">
-                                    {% if  user != profile.user %}
+                                    {% if user.id != profile.id %}
                                         <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token_follow"/>
                                         <button type="button" class="btn btn-outline-dark follow_me" data-mdb-ripple-color="dark"
-                                                style="z-index: 1;margin-left: 38px" id="follow_btn{{ profile.user.id }}">{{ is_followed }}</button>
-                                    {% else %}
+                                                style="z-index: 1;margin-left: 38px" id="follow_btn{{ profile.id }}">{{ is_followed }}</button>
+                                    {% endif %}
+                                    {% if  user.id == profile.id %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
                                                 style="z-index: 1;margin-left: 38px" id="cp_button">
                                             Create post
@@ -31,7 +32,7 @@
                                         </div>
                             </div>
                             <div class="ms-3" style="margin-top: 135px;margin-left: 50px">
-                                <h5>{{ profile.user }}</h5>
+                                <h5>{{ profile.username }}</h5>
 
                             </div>
                         </div>
@@ -118,7 +119,7 @@
         </div>
     </section>
     {#-------------------create new post------------------------#}
-    {% if  user == profile.user %}
+    {% if  user.id == profile.id %}
     <section class="h-100 gradient-custom-2" id="create_post" >
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
