@@ -24,18 +24,10 @@ class Following(models.Model):
         }
 
 
-class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile_user')
-    following = models.ManyToManyField(Following)
-
-    def __str__(self):
-        return self.user.username
-
-
 class Post(models.Model):
     post = models.CharField(max_length=15000)
     date = models.DateTimeField(auto_now=True)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='post_profile')
+    profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_profile')
 
     def serialize(self):
         return {

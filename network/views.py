@@ -1,6 +1,5 @@
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.core.exceptions import MultipleObjectsReturned
 
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -70,13 +69,6 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        try:
-            Profile.objects.create(user=user).save()
-        except MultipleObjectsReturned:
-            return render(request, "network/register.html", {
-                "message": "smth with creating profile"
-            })
-
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
@@ -84,13 +76,13 @@ def register(request):
 
 # profile view---------------------------------------------------------------------------------------------------------
 def profile_view(request, user_id_):  # profile view function
-    profile = Profile.objects.get(user_id=user_id_)
-    followers = Following.objects.filter(followed_user=profile.user.id).count()
-    following = Following.objects.filter(followed_by=profile.user.id).count()
+    profile = User.objects.get(id=user_id_)
+    followers = Following.objects.filter(followed_user=profile.id).count()
+    following = Following.objects.filter(followed_by=profile.id).count()
     posts_number = Post.objects.filter(profile=profile).count()
     posts = Post.objects.filter(profile=profile).order_by('date').reverse()
     # for other users----------------------------------------------------------------------------------
-    is_following = Following.objects.filter(followed_user=profile.user.id, followed_by=request.user)
+    is_following = Following.objects.filter(followed_user=profile.id, followed_by=request.user)
 
     # check if the user is followed
     def is_f(is_ff):
@@ -135,8 +127,7 @@ def create_post(request):
             print(form.cleaned_data)
             post = form.cleaned_data['post']
             user_name = request.user
-            user = User.objects.get(username=user_name)
-            profile = Profile.objects.get(user=user)
+            profile = User.objects.get(username=user_name)
             Post.objects.create(post=post, profile=profile).save()
 
     return redirect('profile_view', request.user.id)
@@ -147,7 +138,7 @@ def edit_post(request, post_id_):
     if request.method == 'PUT':
         post_database = Post.objects.get(id=post_id_)
 
-        if request.user.id == post_database.profile.user.id:
+        if request.user.id == post_database.profile.id:
             data = json.loads(request.body)
             if data.get('post') is not None:
                 post_database.post = data.get('post')
@@ -156,3 +147,11 @@ def edit_post(request, post_id_):
                 return JsonResponse(post_database.serialize(), status=204)
         else:
             return HttpResponse(status=304)
+
+
+def following_view(request):
+    followers = Following.objects.filter(followed_by_id=request.user.id)
+    posts = Post.objects.filter(profile_id__in=followers.values('followed_user'))
+    return render(request, 'network/following.html', {
+        'posts': posts
+    })
