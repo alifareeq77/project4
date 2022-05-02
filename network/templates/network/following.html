@@ -1,6 +1,9 @@
 {% extends "network/layout.html" %}
 {% block posts_view %}
     {% load static %}
+    {% block extra_links %}
+    <script src="{% static 'network/javascript/main.js' %}"></script>
+{% endblock %}
     {% block body %}
         <section class="h-100 gradient-custom-2" id="create_post">
             <div class="container py-5 h-100">
@@ -33,7 +36,17 @@
                                             <p class="row d-flex text-justify post_place{{ post.id }}"
                                                style="text-align: start; padding: 10px;margin-bottom: 20px;word-wrap: break-word;overflow-wrap: break-word;"
                                                id="post{{ post.id }}">{{ post.post }}</p>
-
+                                                 <div class="row">
+                                                    <input type="hidden" name="token" value="{{ csrf_token }}"
+                                                               id="csrf_token_like"/>
+                                                    {% if post in is_liked %}
+                                                    <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                         class="filter-green" id="like{{ post.id }}" data-name="liked"/>
+                                                        {% else %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                         class="filter-green" id="like{{ post.id }}" data-name="notliked"/>
+                                                    {% endif %}
+                                                </div>
                                         </div>
                                     </div>
                                 {% endfor %}

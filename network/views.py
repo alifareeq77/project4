@@ -13,8 +13,11 @@ from .forms import *
 # index--------------------------------------
 def index(request):
     posts = Post.objects.order_by('date').reverse()
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
     return render(request, "network/index.html", context={
-        'posts': posts
+        'posts': posts,
+        'is_liked': liked_post
     })
 
 
@@ -155,8 +158,11 @@ def edit_post(request, post_id_):
 def following_view(request):
     followers = Following.objects.filter(followed_by_id=request.user.id)
     posts = Post.objects.filter(profile_id__in=followers.values('followed_user'))
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
     return render(request, 'network/following.html', {
-        'posts': posts
+        'posts': posts,
+        'is_liked': liked_post
     })
 
 
