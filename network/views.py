@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -13,11 +14,15 @@ from .forms import *
 # index--------------------------------------
 def index(request):
     posts = Post.objects.order_by('date').reverse()
+    paginator = Paginator(posts, per_page=10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     liked_post = Post.objects.filter(
         likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
     return render(request, "network/index.html", context={
-        'posts': posts,
-        'is_liked': liked_post
+        'posts': page_obj,
+        'is_liked': liked_post,
+        'paginator': paginator,
     })
 
 
@@ -160,9 +165,12 @@ def following_view(request):
     posts = Post.objects.filter(profile_id__in=followers.values('followed_user'))
     liked_post = Post.objects.filter(
         likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
+    paginator = Paginator(liked_post, per_page=10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, 'network/following.html', {
         'posts': posts,
-        'is_liked': liked_post
+        'is_liked': page_obj
     })
 
 

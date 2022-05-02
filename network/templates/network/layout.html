@@ -15,7 +15,7 @@
 <body>
 
 <nav class="navbar sticky-top navbar-expand-sm" style="background-color: rgba(0,0,0,95%)">
-    <a class="navbar-brand" href="#">Network</a>
+    <a class="navbar-brand" href="{% url 'index' %}">Network</a>
     <div>
         <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
