@@ -108,6 +108,8 @@ def profile_view(request, user_id_):  # profile view function
                                          followed_user_id=data.get('profile_user_id')).save()
                 resp = {'statue': is_f(Following.objects.filter(followed_by_id=request.user.id))}
                 return JsonResponse(data=resp, status=204)
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
     return render(request, 'network/profile_view.html', {
         'profile': profile,
         'followers': followers,
@@ -115,7 +117,8 @@ def profile_view(request, user_id_):  # profile view function
         'posts_number': posts_number,
         'posts': posts,
         'form': form,
-        'is_followed': is_f(is_following)
+        'is_followed': is_f(is_following),
+        'is_liked': liked_post
     })
 
 
@@ -155,3 +158,18 @@ def following_view(request):
     return render(request, 'network/following.html', {
         'posts': posts
     })
+
+
+def like(request, post_id):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        if data.get('post_id') is not None:
+            try:
+                exist = Likes.objects.get(user_liked_id=request.user, liked_post_id=post_id)
+                exist.delete()
+                resp = {'statue': "unliked"}
+                return JsonResponse(data=resp, status=204)
+            except Likes.DoesNotExist:
+                Likes.objects.create(liked_post_id=post_id, user_liked_id=request.user.id)
+                resp = {'statue': "Liked"}
+                return JsonResponse(data=resp, status=204)
