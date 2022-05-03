@@ -18,6 +18,7 @@
                                      alt="profile img" class="img-fluid img-thumbnail mt-4 mb-2"
                                      style="width: 150px; z-index: 1;border-radius: 50%;margin-left: 20px">
                                 <div class=" mt-4 mb-2 d-flex" style="z-index: 1 ">
+                                    {% if user.is_authenticated %}
                                     {% if user.id != profile.id %}
                                         <input type="hidden" name="token" value="{{ csrf_token }}"
                                                id="csrf_token_follow"/>
@@ -32,6 +33,10 @@
                                             Create post
                                         </button>
                                     {% endif %}
+                                {% else %}
+                                     <button type="button" class="btn btn-outline-dark disabled " data-mdb-ripple-color="dark"
+                                             style="z-index: 1;margin-left: 38px ; cursor: default" title="you must register to follow"   disabled>Follow</button>
+                                {% endif %}
                                 </div>
                             </div>
                             <div class="ms-3" style="margin-top: 135px;margin-left: 50px">
@@ -93,6 +98,7 @@
                                                 <p class="row post_place{{ post.id }}"
                                                    style="text-align: start; padding: 10px;margin-bottom: 20px;"
                                                    id="post{{ post.id }}">{{ post.post }}</p>
+                                               {% if user.is_authenticated  %}
                                                 <div class="row">
                                                     <input type="hidden" name="token" value="{{ csrf_token }}"
                                                                id="csrf_token_like"/>
@@ -104,6 +110,7 @@
                                                          class="filter-green" id="like{{ post.id }}" data-name="notliked"/>
                                                     {% endif %}
                                                 </div>
+                                                {% endif %}
                                                 {#--------------------------------------------------post form (hidden initialiy)#}
                                                 <div class="row show_edit{{ post.id }}"
                                                      style="text-align: start; padding: 10px;display: none">
@@ -141,6 +148,7 @@
         </div>
     </section>
     {#-------------------create new post------------------------#}
+    {% if user.is_authenticated %}
     {% if  user.id == profile.id %}
         <section class="h-100 gradient-custom-2" id="create_post">
             <div class="container py-5 h-100">
@@ -180,5 +188,6 @@
                 </div>
             </div>
         </section>
+    {% endif %}
     {% endif %}
 {% endblock %}

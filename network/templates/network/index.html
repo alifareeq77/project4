@@ -39,6 +39,7 @@
                                             <div class="row">
                                                 <input type="hidden" name="token" value="{{ csrf_token }}"
                                                        id="csrf_token_like"/>
+                                            {% if user.is_authenticated %}
                                                 {% if post in is_liked %}
                                                     <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
                                                          class="filter-green" id="like{{ post.id }}" data-name="liked"/>
@@ -47,6 +48,7 @@
                                                          class="filter-green" id="like{{ post.id }}"
                                                          data-name="notliked"/>
                                                 {% endif %}
+                                            {% endif %}
                                             </div>
                                         </div>
                                     </div>
