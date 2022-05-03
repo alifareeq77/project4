@@ -37,18 +37,23 @@
                                                style="text-align: start; padding: 10px;margin-bottom: 20px;word-wrap: break-word;overflow-wrap: break-word;"
                                                id="post{{ post.id }}">{{ post.post }}</p>
                                             <div class="row">
-                                                <input type="hidden" name="token" value="{{ csrf_token }}"
-                                                       id="csrf_token_like"/>
-                                            {% if user.is_authenticated %}
-                                                {% if post in is_liked %}
-                                                    <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
-                                                         class="filter-green" id="like{{ post.id }}" data-name="liked"/>
+                                                {% if user.is_authenticated %}
+                                                    <input type="hidden" name="token" value="{{ csrf_token }}"
+                                                           id="csrf_token_like"/>
+                                                    {% if post in is_liked %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" id="like{{ post.id }}"
+                                                             data-name="liked"/>
+                                                    {% else %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" id="like{{ post.id }}"
+                                                             data-name="notliked"/>
+                                                    {% endif %}
                                                 {% else %}
-                                                    <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
-                                                         class="filter-green" id="like{{ post.id }}"
-                                                         data-name="notliked"/>
+                                                    <a href="{% url 'register' %}">
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" data-name="liked"/></a>
                                                 {% endif %}
-                                            {% endif %}
                                             </div>
                                         </div>
                                     </div>

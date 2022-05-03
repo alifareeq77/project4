@@ -98,8 +98,8 @@
                                                 <p class="row post_place{{ post.id }}"
                                                    style="text-align: start; padding: 10px;margin-bottom: 20px;"
                                                    id="post{{ post.id }}">{{ post.post }}</p>
-                                               {% if user.is_authenticated  %}
                                                 <div class="row">
+                                               {% if user.is_authenticated  %}
                                                     <input type="hidden" name="token" value="{{ csrf_token }}"
                                                                id="csrf_token_like"/>
                                                     {% if post in is_liked %}
@@ -109,8 +109,12 @@
                                                         <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
                                                          class="filter-green" id="like{{ post.id }}" data-name="notliked"/>
                                                     {% endif %}
-                                                </div>
+                                                   {% else %}
+                                                   <a href="{% url 'register' %}">
+                                                   <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                        class="filter-green" data-name="liked"/></a>
                                                 {% endif %}
+                                                </div>
                                                 {#--------------------------------------------------post form (hidden initialiy)#}
                                                 <div class="row show_edit{{ post.id }}"
                                                      style="text-align: start; padding: 10px;display: none">
