@@ -10,10 +10,34 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.edit').forEach((button) => {
             let post_id = button.id.match(/(\d+)/)[0];
             button.addEventListener('click', () => {
-                show_edit(post_id)
+                show_edit(post_id);
+            })
+        })
+        //like button listener
+        document.querySelectorAll('.filter-green').forEach(like => {
+            let is_liked = like.getAttribute('data-name');
+            let post_liked_id = like.id.match(/(\d+)/)[0];
+            //set init state
+            if (is_liked.toLowerCase() === 'liked') {
+                document.querySelector(`#like${post_liked_id}`).style.animationName = 'like';
+                document.querySelector(`#like${post_liked_id}`).style.animationPlayState = 'running';
+            } else {
+                document.querySelector(`#like${post_liked_id}`).style.animationDuration = '1.5s';
+                document.querySelector(`#like${post_liked_id}`).style.animationName = 'unlike';
+                document.querySelector(`#like${post_liked_id}`).style.animationPlayState = 'running';
+            }
+            like.addEventListener('click', (e) => {
+                e.preventDefault();
+                like_post(post_liked_id, is_liked);
+                if (is_liked.toLowerCase() === 'liked') {
+                    is_liked = 'unliked'
+                } else {
+                    is_liked = 'liked'
+                }
             })
         })
     }
+
 
     // create post listener
     if (document.querySelector('#cp_button')) {
@@ -22,21 +46,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.querySelector('.follow_me')) {
         let user_id = document.querySelector('.follow_me').id.match(/(\d+)/)[0];
+
         function f_u() {
-            let f =parseInt(document.querySelector('#followers_num').innerHTML);
+            let f = parseInt(document.querySelector('#followers_num').innerHTML);
 
-            if(document.querySelector('.follow_me').innerHTML.toLowerCase()==='follow'){
-                document.querySelector('#followers_num').innerHTML=(f+1);
-                return"Unfollow"
+            if (document.querySelector('.follow_me').innerHTML.toLowerCase() === 'follow') {
+                document.querySelector('#followers_num').innerHTML = (f + 1);
+                return "Unfollow"
 
-            }
-            else {
-                document.querySelector('#followers_num').innerHTML=(f-1);
+            } else {
+                document.querySelector('#followers_num').innerHTML = (f - 1);
                 return "Follow"
 
             }
 
         }
+
         document.querySelector('.follow_me').addEventListener('click', (e) => {
             e.preventDefault()
             let csrf_token_btn = document.querySelector('#csrf_token_follow').value;
@@ -50,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
 
             }).then(() => {
-                document.querySelector('.follow_me').innerHTML=f_u();
+                document.querySelector('.follow_me').innerHTML = f_u();
 
             })
         })
@@ -76,9 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // add listener to the form with post id
         document.querySelector(`#do_edit${postId}`).addEventListener('click', (e) => {
-            console.log('clicked')
             let _post = document.querySelector(`.textarea${postId}`).value;
-            let csrf_token = document.querySelector('#csrf_token').value;
+            let csrf_token = document.querySelector('#csrf_token_edit').value;
             fetch(`/edit_post/${postId}`, {
                 method: 'PUT',
                 headers: {
@@ -101,8 +125,34 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    function following_system() {
-        return 0;
+    function like_post(post_liked_id, is_clicked) {
+        let csrf_token_like = document.querySelector('#csrf_token_like').value;
+
+        function like_it(is_clicked) {
+
+            if (is_clicked.toLowerCase() === 'liked') {
+                document.querySelector(`#like${post_liked_id}`).style.animationName = 'unlike';
+                document.querySelector(`#like${post_liked_id}`).style.animationPlayState = 'running';
+            } else {
+                document.querySelector(`#like${post_liked_id}`).style.animationName = 'like';
+                document.querySelector(`#like${post_liked_id}`).style.animationPlayState = 'running';
+            }
+        }
+
+        // if in userprofile
+        fetch(`/like/${post_liked_id}`, {
+            method: 'PUT',
+            headers: {
+                'X-CSRFToken': csrf_token_like
+            },
+            body: JSON.stringify({
+                'post_id': post_liked_id
+            })
+
+        }).then(() => {
+            like_it(is_clicked)
+
+        })
     }
 
 //load posts by default

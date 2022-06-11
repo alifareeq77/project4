@@ -1,51 +1,97 @@
 {% extends "network/layout.html" %}
-{% block posts_view %}
 {% load static %}
-{% block body %}
-    <section class="h-100 gradient-custom-2" id="create_post">
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col col-lg-9 col-xl-7">
-                    <div class="card">
-                    {% if posts %}
-                        {% for post in posts %}
-                            <div class="row g-2 border border-primary rounded d-flex"
-                                 style="margin: 25px;position: relative;">
-                                <div class="col" style="">
-                                    <div class="row d-flex justify-content-between"
-                                         style="padding: 10px 10px 1px 10px">
-                                        <div class="username" style="color: blue">
-                                            <img class="img-thumbnail"
-                                                 src="{% static 'network/media/pngitem_1468479.png' %} "
-                                                 style="width: 45px;height: 45px;border-radius: 90%" alt="profile img">
-                                            <a style="align-items: center" href="{% url 'profile_view' post.profile.id %}">{{ post.profile.username }}</a></div>
+{% block extra_links %}
+    <script src="{% static 'network/javascript/main.js' %}"></script>
+{% endblock %}
+{% block posts_view %}
+    {% block body %}
+        <section class="h-100 gradient-custom-2" id="create_post">
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col col-lg-9 col-xl-7">
+                        <div class="card">
+                            {% if posts %}
+                                {% for post in posts %}
+                                    <div class="row g-2 border border-primary rounded d-flex"
+                                         style="margin: 25px;position: relative;">
+                                        <div class="col" style="">
+                                            <div class="row d-flex justify-content-between"
+                                                 style="padding: 10px 10px 1px 10px">
+                                                <div class="username" style="color: blue">
+                                                    <img class="img-thumbnail"
+                                                         src="{% static 'network/media/pngitem_1468479.png' %} "
+                                                         style="width: 45px;height: 45px;border-radius: 90%"
+                                                         alt="profile img">
+                                                    <a style="align-items: center"
+                                                       href="{% url 'profile_view' post.profile.id %}">{{ post.profile.username }}</a>
+                                                </div>
 
-                                    </div>
-                                    <hr/>
-                                    {# ----------------------post body---------------- #}
-                                    <div class="row d-flex text-muted"
-                                         style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
-                                    <hr/>
-                                    {#----------------------------------------------the post#}
-                                    <p class="row d-flex text-justify post_place{{ post.id }}"
-                                       style="text-align: start; padding: 10px;margin-bottom: 20px;word-wrap: break-word;overflow-wrap: break-word;"
-                                       id="post{{ post.id }}">{{ post.post }}</p>
-
-                                </div>
-                            </div>
-                        {% endfor %}
-                        {% else %}
-                                  <div class="row g-2" style="margin: 25px">
-                                        <div class="col" style="padding: 25px;">
-                                            <div style="text-align: center;">No posts yet !</div>
+                                            </div>
+                                            <hr/>
+                                            {# ----------------------post body---------------- #}
+                                            <div class="row d-flex text-muted"
+                                                 style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
+                                            <hr/>
+                                            {#----------------------------------------------the post#}
+                                            <p class="row d-flex text-justify post_place{{ post.id }}"
+                                               style="text-align: start; padding: 10px;margin-bottom: 20px;word-wrap: break-word;overflow-wrap: break-word;"
+                                               id="post{{ post.id }}">{{ post.post }}</p>
+                                            <div class="row">
+                                                {% if user.is_authenticated %}
+                                                    <input type="hidden" name="token" value="{{ csrf_token }}"
+                                                           id="csrf_token_like"/>
+                                                    {% if post in is_liked %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" id="like{{ post.id }}"
+                                                             data-name="liked"/>
+                                                    {% else %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" id="like{{ post.id }}"
+                                                             data-name="notliked"/>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <a href="{% url 'register' %}">
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                             class="filter-green" data-name="liked"/></a>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
-                    {% endif %}
+                                {% endfor %}
+                                <div class="container p-4">
+                                    <div class="pagination justify-content-center">
+                                        {% if posts.has_previous %}
+                                            <li><a href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+                                        {% else %}
+                                            <li class="disabled"><span>&laquo;</span></li>
+                                        {% endif %}
+                                        {% for i in posts.paginator.page_range %}
+                                            {% if posts.number == i %}
+                                                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if posts.has_next %}
+                                            <li><a href="?page={{ posts.next_page_number }}">&raquo;</a></li>
+                                        {% else %}
+                                            <li class="disabled"><span>&raquo;</span></li>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="row g-2" style="margin: 25px">
+                                    <div class="col" style="padding: 25px;">
+                                        <div style="text-align: center;">No posts yet !</div>
+                                    </div>
+                                </div>
+                            {% endif %}
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-{% endblock %}
+        </section>
+    {% endblock %}
 {% endblock %}

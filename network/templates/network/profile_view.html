@@ -2,7 +2,7 @@
 {% load static %}
 {% block extra_links %}
     <link href="{% static 'network/css/profile_view.css' %}" rel="stylesheet">
-<script src="{% static 'network/javascript/profile_view.js' %}"></script>
+    <script src="{% static 'network/javascript/profile_view.js' %}"></script>
 {% endblock extra_links %}
 {% block title %}{{ profile.username }}{% endblock %}
 {% block body %}
@@ -18,10 +18,14 @@
                                      alt="profile img" class="img-fluid img-thumbnail mt-4 mb-2"
                                      style="width: 150px; z-index: 1;border-radius: 50%;margin-left: 20px">
                                 <div class=" mt-4 mb-2 d-flex" style="z-index: 1 ">
+                                    {% if user.is_authenticated %}
                                     {% if user.id != profile.id %}
-                                        <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token_follow"/>
-                                        <button type="button" class="btn btn-outline-dark follow_me" data-mdb-ripple-color="dark"
-                                                style="z-index: 1;margin-left: 38px" id="follow_btn{{ profile.id }}">{{ is_followed }}</button>
+                                        <input type="hidden" name="token" value="{{ csrf_token }}"
+                                               id="csrf_token_follow"/>
+                                        <button type="button" class="btn btn-outline-dark follow_me"
+                                                data-mdb-ripple-color="dark"
+                                                style="z-index: 1;margin-left: 38px"
+                                                id="follow_btn{{ profile.id }}">{{ is_followed }}</button>
                                     {% endif %}
                                     {% if  user.id == profile.id %}
                                         <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
@@ -29,7 +33,11 @@
                                             Create post
                                         </button>
                                     {% endif %}
-                                        </div>
+                                {% else %}
+                                     <button type="button" class="btn btn-outline-dark disabled " data-mdb-ripple-color="dark"
+                                             style="z-index: 1;margin-left: 38px ; cursor: default" title="you must register to follow"   disabled>Follow</button>
+                                {% endif %}
+                                </div>
                             </div>
                             <div class="ms-3" style="margin-top: 135px;margin-left: 50px">
                                 <h5>{{ profile.username }}</h5>
@@ -74,34 +82,57 @@
                                                     </div>
                                                     {#                                                    edit btn#}
                                                     {% if user.id == profile.id %}
-                                                    <button type="button" class="btn btn-dark btn-sm edit"
-                                                            style="height: 30px;margin: 10px" id="btn{{ post.id }}">edit
-                                                        post
-                                                    </button>
+                                                        <button type="button" class="btn btn-dark btn-sm edit"
+                                                                style="height: 30px;margin: 10px" id="btn{{ post.id }}">
+                                                            edit
+                                                            post
+                                                        </button>
                                                     {% endif %}
                                                 </div>
-                                                <div class="row text-muted" style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
+                                                <div class="row text-muted"
+                                                     style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt ">{{ post.date }}</div>
+                                                <div class="row text-muted"
+                                                     style="padding: 1px 10px 1px 20px;font-style: italic;font-size:9pt "></div>
                                                 <hr/>
                                                 {#----------------------------------------------the post#}
                                                 <p class="row post_place{{ post.id }}"
-                                                     style="text-align: start; padding: 10px;margin-bottom: 20px;"
-                                                     id="post{{ post.id }}">{{ post.post }}</p>
+                                                   style="text-align: start; padding: 10px;margin-bottom: 20px;"
+                                                   id="post{{ post.id }}">{{ post.post }}</p>
+                                                <div class="row">
+                                               {% if user.is_authenticated  %}
+                                                    <input type="hidden" name="token" value="{{ csrf_token }}"
+                                                               id="csrf_token_like"/>
+                                                    {% if post in is_liked %}
+                                                    <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                         class="filter-green" id="like{{ post.id }}" data-name="liked"/>
+                                                        {% else %}
+                                                        <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                         class="filter-green" id="like{{ post.id }}" data-name="notliked"/>
+                                                    {% endif %}
+                                                   {% else %}
+                                                   <a href="{% url 'register' %}">
+                                                   <img src="{% static 'network/media/heart-shaped-svgrepo-com.svg' %}"
+                                                        class="filter-green" data-name="liked"/></a>
+                                                {% endif %}
+                                                </div>
                                                 {#--------------------------------------------------post form (hidden initialiy)#}
                                                 <div class="row show_edit{{ post.id }}"
                                                      style="text-align: start; padding: 10px;display: none">
-
-                                                        <div class="form-group"
-                                                             style="text-align: start;">
-                                                                <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token"/>
-                                                            <textarea name="post" class="form-control textarea{{ post.id }}" id="control-textarea" form="edit_form{{ post.id }}" autofocus required style="overflow-wrap:break-word ">
+                                                    <div class="form-group"
+                                                         style="text-align: start;">
+                                                            <input type="hidden" name="token" value="{{ csrf_token }}" id="csrf_token_edit"/>
+                                                        <textarea name="post" class="form-control textarea{{ post.id }}"
+                                                                  id="control-textarea" form="edit_form{{ post.id }}"
+                                                                  autofocus required style="overflow-wrap:break-word ">
                                                             </textarea>
-                                                            <div class="row d-flex justify-content-end"
-                                                                 style="margin: 20px 10px 0 20px">
-                                                                <button type="button" class="btn btn-primary" id="do_edit{{ post.id }}">
-                                                                    submit
-                                                                </button>
-                                                            </div>
+                                                        <div class="row d-flex justify-content-end"
+                                                             style="margin: 20px 10px 0 20px">
+                                                            <button type="button" class="btn btn-primary"
+                                                                    id="do_edit{{ post.id }}">
+                                                                submit
+                                                            </button>
                                                         </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -121,44 +152,46 @@
         </div>
     </section>
     {#-------------------create new post------------------------#}
+    {% if user.is_authenticated %}
     {% if  user.id == profile.id %}
-    <section class="h-100 gradient-custom-2" id="create_post" >
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col col-lg-9 col-xl-7">
-                    <div class="card">
-                        <div class="row g-2 border border-primary rounded"
-                             style="margin: 25px;position: relative;">
-                            <div class="col" style="">
-                                <div class="row d-flex justify-content-between"
-                                     style="padding: 10px 10px 1px 10px">
-                                    <div class="username" style="color: blue">
-                                        <img class="img-thumbnail"
-                                             src="{% static 'network/media/pngitem_1468479.png' %} "
-                                             style="width: 45px;height: 45px;border-radius: 90%" alt="profile img">
-                                        <span style="align-items: center">{{ user }}</span></div>
+        <section class="h-100 gradient-custom-2" id="create_post">
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col col-lg-9 col-xl-7">
+                        <div class="card">
+                            <div class="row g-2 border border-primary rounded"
+                                 style="margin: 25px;position: relative;">
+                                <div class="col" style="">
+                                    <div class="row d-flex justify-content-between"
+                                         style="padding: 10px 10px 1px 10px">
+                                        <div class="username" style="color: blue">
+                                            <img class="img-thumbnail"
+                                                 src="{% static 'network/media/pngitem_1468479.png' %} "
+                                                 style="width: 45px;height: 45px;border-radius: 90%" alt="profile img">
+                                            <span style="align-items: center">{{ user }}</span></div>
 
+                                    </div>
+                                    <hr/>
+                                    {# ----------------------form body---------------- #}
+                                    <form name="post-it" method="post" action="{% url 'create_post' %}">
+                                        <div class="form-group"
+                                             style="text-align: start; padding: 10px;margin-bottom: 20px">
+                                            {% csrf_token %}
+                                            {{ form.post }}
+                                        </div>
+                                        <div class="row d-flex justify-content-end" style="margin: 20px 10px 10px 20px">
+                                            <button type="submit" class="btn btn-primary">
+                                                submit
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <hr/>
-                                {# ----------------------form body---------------- #}
-                                <form name="post-it" method="post" action="{% url 'create_post' %}">
-                                    <div class="form-group"
-                                         style="text-align: start; padding: 10px;margin-bottom: 20px">
-                                        {% csrf_token %}
-                                        {{ form.post }}
-                                    </div>
-                                    <div class="row d-flex justify-content-end" style="margin: 20px 10px 10px 20px">
-                                        <button type="submit" class="btn btn-primary">
-                                            submit
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    {% endif %}
     {% endif %}
 {% endblock %}

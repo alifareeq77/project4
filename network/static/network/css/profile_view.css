@@ -1,22 +1,23 @@
-body{
+body {
     background: linear-gradient(to right, rgb(247, 85, 202), rgb(18, 103, 248));
-	background-size: 400% 400%;
-	animation: gradient 15s ease infinite;
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 
 }
 
 
 @keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
+
 .card {
 
     border: none;
@@ -61,7 +62,7 @@ body{
     line-height: 0;
     max-height: 0;
     animation-name: show;
-        animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
     animation-play-state: paused;
 }
 
@@ -93,8 +94,8 @@ body{
         padding: 20px;
         margin-bottom: 10px;
     }
-    50%{
-               opacity: 0.5%;
+    50% {
+        opacity: 0.5%;
         height: 50%;
         line-height: 50%;
     }
@@ -124,10 +125,10 @@ body{
         margin-bottom: 0px;
     }
     75% {
-         overflow: visible;
+        overflow: visible;
 
         line-height: 100%;
-           max-height: 100%;
+        max-height: 100%;
 
     }
     100% {
@@ -137,4 +138,34 @@ body{
         overflow: visible;
 
     }
+}
+
+.filter-green {
+    margin: 15px 10px 15px 10px;
+    width: 20px;
+    cursor: pointer;
+    /*filter: invert(100%) sepia(93%) saturate(1352%) hue-rotate(270deg) brightness(100%) contrast(119%);*/
+    animation: like 1s ease paused;
+    animation-fill-mode: forwards;
+}
+
+@keyframes like {
+
+    50% {
+        filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(0deg) brightness(100%) contrast(119%);
+    }
+    100% {
+        filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(-100deg) brightness(100%) contrast(119%);
+    }
+}
+
+@keyframes unlike {
+    25%{
+        filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(-100deg) brightness(100%) contrast(119%);
+    }
+
+    100% {
+        filter: invert(100%) sepia(100%) saturate(10%) hue-rotate(100deg) brightness(100%) contrast(-50%)
+    }
+
 }

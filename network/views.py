@@ -1,5 +1,7 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -13,8 +15,15 @@ from .forms import *
 # index--------------------------------------
 def index(request):
     posts = Post.objects.order_by('date').reverse()
+    paginator = Paginator(posts, per_page=10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
     return render(request, "network/index.html", context={
-        'posts': posts
+        'posts': page_obj,
+        'is_liked': liked_post,
+        'paginator': paginator,
     })
 
 
@@ -82,7 +91,8 @@ def profile_view(request, user_id_):  # profile view function
     posts_number = Post.objects.filter(profile=profile).count()
     posts = Post.objects.filter(profile=profile).order_by('date').reverse()
     # for other users----------------------------------------------------------------------------------
-    is_following = Following.objects.filter(followed_user=profile.id, followed_by=request.user)
+    if request.user.is_authenticated:
+        is_following = Following.objects.filter(followed_user=profile.id, followed_by=request.user)
 
     # check if the user is followed
     def is_f(is_ff):
@@ -108,18 +118,33 @@ def profile_view(request, user_id_):  # profile view function
                                          followed_user_id=data.get('profile_user_id')).save()
                 resp = {'statue': is_f(Following.objects.filter(followed_by_id=request.user.id))}
                 return JsonResponse(data=resp, status=204)
-    return render(request, 'network/profile_view.html', {
-        'profile': profile,
-        'followers': followers,
-        'following': following,
-        'posts_number': posts_number,
-        'posts': posts,
-        'form': form,
-        'is_followed': is_f(is_following)
-    })
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
+    if (request.user.is_authenticated):
+        return render(request, 'network/profile_view.html', {
+            'profile': profile,
+            'followers': followers,
+            'following': following,
+            'posts_number': posts_number,
+            'posts': posts,
+            'form': form,
+            'is_followed': is_f(is_following),
+            'is_liked': liked_post
+        })
+    else:
+        return render(request, 'network/profile_view.html', {
+            'profile': profile,
+            'followers': followers,
+            'following': following,
+            'posts_number': posts_number,
+            'posts': posts,
+            'form': form,
+            'is_liked': liked_post
+        })
 
 
 # create post --------------------------------------------------------------------------
+@login_required
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -134,6 +159,7 @@ def create_post(request):
 
 
 # handling the put request of editing post -------------------------------------------------------
+@login_required
 def edit_post(request, post_id_):
     if request.method == 'PUT':
         post_database = Post.objects.get(id=post_id_)
@@ -149,9 +175,32 @@ def edit_post(request, post_id_):
             return HttpResponse(status=304)
 
 
+@login_required
 def following_view(request):
     followers = Following.objects.filter(followed_by_id=request.user.id)
     posts = Post.objects.filter(profile_id__in=followers.values('followed_user'))
+    liked_post = Post.objects.filter(
+        likes__user_liked__in=Likes.objects.filter(user_liked_id=request.user.id).values('user_liked_id'))
+    paginator = Paginator(liked_post, per_page=10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, 'network/following.html', {
-        'posts': posts
+        'posts': posts,
+        'is_liked': page_obj
     })
+
+
+@login_required
+def like(request, post_id):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        if data.get('post_id') is not None:
+            try:
+                exist = Likes.objects.get(user_liked_id=request.user, liked_post_id=post_id)
+                exist.delete()
+                resp = {'statue': "unliked"}
+                return JsonResponse(data=resp, status=204)
+            except Likes.DoesNotExist:
+                Likes.objects.create(liked_post_id=post_id, user_liked_id=request.user.id)
+                resp = {'statue': "Liked"}
+                return JsonResponse(data=resp, status=204)
